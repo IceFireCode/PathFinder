@@ -119,7 +119,6 @@ class PlayBoard @JvmOverloads constructor(
     }
 
     fun clearPath() {
-        pathFields = setOf()
         pathFields.forEach {
             it.fieldType = FieldType.DEFAULT
         }

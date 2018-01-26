@@ -28,7 +28,7 @@ class PlayBoard @JvmOverloads constructor(
     val wallFields: MutableSet<FieldInBord> = mutableSetOf<FieldInBord>()
     var pathFields: Set<FieldInBord> = setOf<FieldInBord>()
 
-    val numberOfFieldsInOneRow = 16
+    val numberOfFieldsInOneRow = 12
     var fieldSize = 0
     val fieldBorderPaint = Paint()
     val fieldPaint = Paint()

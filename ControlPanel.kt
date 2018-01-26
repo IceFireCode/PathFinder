@@ -26,24 +26,10 @@ class ControlPanel @JvmOverloads constructor(
         View.inflate(context, R.layout.view_control_panel, this)
 
         controlPanelFindPath.setShrinkGrowAnimation()
-        controlPanelFindPath.onClick {
-            activeFieldType = FieldType.DEFAULT
-        }
-
+        controlClearAll.setShrinkGrowAnimation()
         controlPanelStartField.setShrinkGrowAnimation()
-//        controlPanelStartField.onClick {
-//            activeFieldType = FieldType.START
-//        }
-
         controlPanelEndField.setShrinkGrowAnimation()
-        controlPanelEndField.onClick {
-            activeFieldType = FieldType.END
-        }
-
         controlPanelWallField.setShrinkGrowAnimation()
-        controlPanelWallField.onClick {
-            activeFieldType = FieldType.WALL
-        }
 
     }
 

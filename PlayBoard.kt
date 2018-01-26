@@ -68,7 +68,6 @@ class PlayBoard @JvmOverloads constructor(
                     wallFields.remove(fieldInBord)
                     return true
                 } else {
-                    startField?.let { it.fieldType = FieldType.DEFAULT }
                     fieldInBord.fieldType = FieldType.WALL
                     wallFields.add(fieldInBord)
                     return true
@@ -109,15 +108,27 @@ class PlayBoard @JvmOverloads constructor(
         return null
     }
 
+    fun clearBoard() {
+        startField = null; endField = null; pathFields = setOf(); wallFields.clear()
+        for (i in 0.until(numberOfFieldsInOneRow)) {
+            for (j in 0.until(numberOfFieldsInOneRow)) {
+                allFields[i][j].fieldType = FieldType.DEFAULT
+            }
+        }
+        invalidate()
+    }
+
     fun findPath() {
         if (startField != null && endField != null) {
             val path = Path(startField!!.xCoordinate, endField!!.xCoordinate, startField!!.yCoordinate, endField!!.yCoordinate)
             pathFields = path.determinePathFields(this)
+            var hasReachedWall = false
             pathFields.forEach {
                 if (wallFields.contains(it)){
-                    return
+                    hasReachedWall = true
+                    return@forEach
                 }
-                if (it != startField && it != endField) {
+                if (it != startField && it != endField && !hasReachedWall) {
                     it.fieldType = FieldType.PATH
                 }
             }
@@ -139,8 +150,7 @@ class PlayBoard @JvmOverloads constructor(
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
-        val rows = numberOfFieldsInOneRow
-        for (i in 0.until(rows)) {
+        for (i in 0.until(numberOfFieldsInOneRow)) {
             for (j in 0.until(numberOfFieldsInOneRow)) {
                 val recL = j * fieldSize
                 val recR = (j + 1) * fieldSize

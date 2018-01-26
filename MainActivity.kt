@@ -15,6 +15,18 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        controlPanelFindPath.onClick {
+            controlPanel.activeFieldType = FieldType.PATH
+            playBoard.activeFieldType = FieldType.PATH
+            playBoard.findPath()
+        }
+
+        controlClearAll.onClick {
+            controlPanel.activeFieldType = FieldType.DEFAULT
+            playBoard.activeFieldType = FieldType.DEFAULT
+            playBoard.clearBoard()
+        }
+
         controlPanelStartField.onClick {
             controlPanel.activeFieldType = FieldType.START
             playBoard.activeFieldType = FieldType.START
@@ -28,12 +40,6 @@ class MainActivity : AppCompatActivity() {
         controlPanelWallField.onClick {
             controlPanel.activeFieldType = FieldType.WALL
             playBoard.activeFieldType = FieldType.WALL
-        }
-
-        controlPanelFindPath.onClick {
-            controlPanel.activeFieldType = FieldType.PATH
-            playBoard.activeFieldType = FieldType.PATH
-            playBoard.findPath()
         }
 
     }

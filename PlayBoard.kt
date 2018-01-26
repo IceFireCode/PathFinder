@@ -30,7 +30,7 @@ class PlayBoard @JvmOverloads constructor(
     val wallFields: MutableSet<FieldInBord> = mutableSetOf<FieldInBord>()
     var pathFields: Set<FieldInBord> = setOf<FieldInBord>()
 
-    val numberOfFieldsInOneRow = 8
+    val numberOfFieldsInOneRow = 16
     var fieldSize = 0
     val fieldBorderPaint = Paint()
     val fieldPaint = Paint()
@@ -109,7 +109,7 @@ class PlayBoard @JvmOverloads constructor(
     }
 
     fun clearBoard() {
-        startField = null; endField = null; pathFields = setOf(); wallFields.clear()
+        startField = null; endField = null; wallFields.clear(); clearPath()
         for (i in 0.until(numberOfFieldsInOneRow)) {
             for (j in 0.until(numberOfFieldsInOneRow)) {
                 allFields[i][j].fieldType = FieldType.DEFAULT
@@ -118,7 +118,16 @@ class PlayBoard @JvmOverloads constructor(
         invalidate()
     }
 
+    fun clearPath() {
+        pathFields = setOf()
+        pathFields.forEach {
+            it.fieldType = FieldType.DEFAULT
+        }
+        invalidate()
+    }
+
     fun findPath() {
+        clearPath()
         if (startField != null && endField != null) {
             val path = Path(startField!!.xCoordinate, endField!!.xCoordinate, startField!!.yCoordinate, endField!!.yCoordinate)
             pathFields = path.determinePathFields(this)

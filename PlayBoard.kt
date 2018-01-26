@@ -9,8 +9,6 @@ import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import nl.ns.pathfinder.Extensions.getSmallestScreenSize
-import org.jetbrains.anko.toast
-import kotlin.system.exitProcess
 
 /**
  * Created by paulvc on 20-12-17.
@@ -120,7 +118,9 @@ class PlayBoard @JvmOverloads constructor(
 
     fun clearPath() {
         pathFields.forEach {
-            it.fieldType = FieldType.DEFAULT
+            if (it != startField && it != endField) {
+                it.fieldType = FieldType.DEFAULT
+            }
         }
         invalidate()
     }

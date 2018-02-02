@@ -7,7 +7,6 @@ import android.support.v4.content.ContextCompat
 import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
-import android.view.View
 import nl.ns.pathfinder.Extensions.getSmallestScreenSize
 
 /**
@@ -15,7 +14,7 @@ import nl.ns.pathfinder.Extensions.getSmallestScreenSize
  */
 class PlayBoard @JvmOverloads constructor(
         context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
-) : View(context, attrs, defStyleAttr) {
+) : BoxDrawingView(context, attrs) {
     val TAG = PlayBoard::class.java.simpleName
 
     // field selection state
@@ -33,6 +32,8 @@ class PlayBoard @JvmOverloads constructor(
     val fieldBorderPaint = Paint()
     val fieldPaint = Paint()
 
+    var eventIsProcessed: Boolean = false
+
     init {
         fieldSize = determineFieldSize()
 
@@ -43,19 +44,72 @@ class PlayBoard @JvmOverloads constructor(
                 FieldInBord(i, j)
             }
         }
+    }
 
-        setOnTouchListener { view, event ->
-            if (event.action == MotionEvent.ACTION_UP) {
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        super.onTouchEvent(event)
+
+        if (event.action == MotionEvent.ACTION_DOWN) {
+            Log.i(TAG, "$event")
+            if (event.historySize > 0) {
                 val touchedField = getFieldFromPositionOnCanvas(event.x.toInt(), event.y.toInt())
                 touchedField?.let {
                     updateFieldCollections(it)?.let {
                         invalidate()
                     }
                 }
-                //context.toast("column: ${touchedField.xCoordinate}, row: ${touchedField.yCoordinate}")
             }
-            true
+            eventIsProcessed = true
         }
+
+        if (event.action == MotionEvent.ACTION_MOVE) {
+            Log.i(TAG, event.toString())
+            if (!eventIsProcessed) {
+                if (event.historySize > 0) {
+                    val touchedFieldStart = getFieldFromPositionOnCanvas(event.getHistoricalX(0).toInt(), event.getHistoricalY(0).toInt())
+                    touchedFieldStart?.let {
+                        updateFieldCollections(it)?.let {
+                            invalidate()
+                        }
+                    }
+                }
+            }
+            eventIsProcessed = true
+        }
+
+//            if (event.action == MotionEvent.ACTION_MOVE){
+//                Log.i(TAG, "$event")
+//                if (event.historySize > 0) {
+//                    val touchedFieldStart = getFieldFromPositionOnCanvas(event.getHistoricalX(0).toInt(), event.getHistoricalY(0).toInt())
+//                    touchedFieldStart?.let {
+//                        updateFieldCollections(it)?.let {
+//                            invalidate()
+//                        }
+//                    }
+//                } else {
+//                    val touchedFieldStart = getFieldFromPositionOnCanvas(event.x.toInt(), event.y.toInt())
+//                    touchedFieldStart?.let {
+//                        updateFieldCollections(it)?.let {
+//                            invalidate()
+//                        }
+//                    }
+//                }
+//                eventIsProcessed = true
+//            }
+
+        if (event.action == MotionEvent.ACTION_UP) {
+            Log.i(TAG, event.toString())
+            emptyBoxes()
+            val touchedField = getFieldFromPositionOnCanvas(event.x.toInt(), event.y.toInt())
+            touchedField?.let {
+                updateFieldCollections(it)?.let {
+                    invalidate()
+                }
+            }
+            eventIsProcessed = false
+        }
+
+        return true
     }
 
     private fun updateFieldCollections(fieldInBord: FieldInBord): Boolean? {
@@ -98,8 +152,8 @@ class PlayBoard @JvmOverloads constructor(
             FieldType.DEFAULT -> {
                 if (fieldInBord.fieldType != FieldType.DEFAULT) {
                     fieldInBord.fieldType = FieldType.DEFAULT
-                    return true
                 }
+                return true
             }
             else -> return null
         }
@@ -132,7 +186,7 @@ class PlayBoard @JvmOverloads constructor(
             pathFields = path.determinePathFields(this)
             var hasReachedWall = false
             pathFields.forEach {
-                if (wallFields.contains(it)){
+                if (wallFields.contains(it)) {
                     hasReachedWall = true
                     return@forEach
                 }
@@ -156,8 +210,6 @@ class PlayBoard @JvmOverloads constructor(
     }
 
     override fun onDraw(canvas: Canvas) {
-        super.onDraw(canvas)
-
         for (i in 0.until(numberOfFieldsInOneRow)) {
             for (j in 0.until(numberOfFieldsInOneRow)) {
                 val recL = j * fieldSize
@@ -178,6 +230,7 @@ class PlayBoard @JvmOverloads constructor(
                 //println(allFields[i][j]) // Prints: the String at position 0, 3
             }
         }
+        super.onDraw(canvas)
     }
 
     private fun determineFieldSize(): Int {

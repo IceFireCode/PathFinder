@@ -44,7 +44,7 @@ public class BoxDrawingView extends View {
     private void init() {
         // Paint the boxes a nice semitransparent red (ARGB)
         mBoxPaint = new Paint();
-        mBoxPaint.setColor(0x33777777);
+        mBoxPaint.setColor(0x22777777);
 
         // Paint the background transparent
         mBackgroundPaint = new Paint();
@@ -145,8 +145,8 @@ public class BoxDrawingView extends View {
         }
     }
 
-    public Box getCurrentBox() {
-        return mCurrentBox;
+    public List<Box> getBoxes() {
+        return mBoxes;
     }
 
     public void emptyBoxes() {

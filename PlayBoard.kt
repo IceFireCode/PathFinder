@@ -3,11 +3,14 @@ package nl.ns.pathfinder
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.graphics.PointF
 import android.support.v4.content.ContextCompat
 import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
 import nl.ns.pathfinder.Extensions.getSmallestScreenSize
+import kotlin.math.max
+import kotlin.math.min
 
 /**
  * Created by paulvc on 20-12-17.
@@ -32,8 +35,6 @@ class PlayBoard @JvmOverloads constructor(
     val fieldBorderPaint = Paint()
     val fieldPaint = Paint()
 
-    var eventIsProcessed: Boolean = false
-
     init {
         fieldSize = determineFieldSize()
 
@@ -47,69 +48,45 @@ class PlayBoard @JvmOverloads constructor(
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
+
+        // let the super class draw a box
         super.onTouchEvent(event)
 
-        if (event.action == MotionEvent.ACTION_DOWN) {
-            Log.i(TAG, "$event")
-            if (event.historySize > 0) {
-                val touchedField = getFieldFromPositionOnCanvas(event.x.toInt(), event.y.toInt())
-                touchedField?.let {
-                    updateFieldCollections(it)?.let {
-                        invalidate()
-                    }
-                }
-            }
-            eventIsProcessed = true
-        }
-
-        if (event.action == MotionEvent.ACTION_MOVE) {
-            Log.i(TAG, event.toString())
-            if (!eventIsProcessed) {
-                if (event.historySize > 0) {
-                    val touchedFieldStart = getFieldFromPositionOnCanvas(event.getHistoricalX(0).toInt(), event.getHistoricalY(0).toInt())
-                    touchedFieldStart?.let {
-                        updateFieldCollections(it)?.let {
-                            invalidate()
-                        }
-                    }
-                }
-            }
-            eventIsProcessed = true
-        }
-
-//            if (event.action == MotionEvent.ACTION_MOVE){
-//                Log.i(TAG, "$event")
-//                if (event.historySize > 0) {
-//                    val touchedFieldStart = getFieldFromPositionOnCanvas(event.getHistoricalX(0).toInt(), event.getHistoricalY(0).toInt())
-//                    touchedFieldStart?.let {
-//                        updateFieldCollections(it)?.let {
-//                            invalidate()
-//                        }
-//                    }
-//                } else {
-//                    val touchedFieldStart = getFieldFromPositionOnCanvas(event.x.toInt(), event.y.toInt())
-//                    touchedFieldStart?.let {
-//                        updateFieldCollections(it)?.let {
-//                            invalidate()
-//                        }
-//                    }
-//                }
-//                eventIsProcessed = true
-//            }
-
+        // use the drawn box to get the selected field(s)
         if (event.action == MotionEvent.ACTION_UP) {
             Log.i(TAG, event.toString())
+            val currentBox: Box? = boxes[0]
             emptyBoxes()
-            val touchedField = getFieldFromPositionOnCanvas(event.x.toInt(), event.y.toInt())
-            touchedField?.let {
-                updateFieldCollections(it)?.let {
+            currentBox?.let {
+                val touchedFieldOrigin = getFieldFromPositionOnCanvas(it.origin)
+                val touchedFieldCurrent = getFieldFromPositionOnCanvas(it.current)
+                if (touchedFieldOrigin != null && touchedFieldCurrent != null) {
+                    val currentEqualsOrigin = touchedFieldOrigin == touchedFieldCurrent
+
+                    // if it's about a groupselection of fields
+                    if (!currentEqualsOrigin && activeFieldType.isMultipleFieldsAllowed) {
+                        val touchedFieldCollection = getFieldsFromPositionOnCanvas(touchedFieldOrigin, touchedFieldCurrent)
+                        updateFieldCollections(touchedFieldCollection)
+                        //todo have all fields in between also be updated
+                    }
+
+                    // if it's about just one field
+                    else {
+                        updateFieldCollections(touchedFieldCurrent)
+                    }
+
                     invalidate()
                 }
             }
-            eventIsProcessed = false
         }
 
         return true
+    }
+
+    private fun updateFieldCollections(touchedFieldCollection: Set<FieldInBord>) {
+        touchedFieldCollection.forEach {
+            updateFieldCollections(it)
+        }
     }
 
     private fun updateFieldCollections(fieldInBord: FieldInBord): Boolean? {
@@ -152,8 +129,8 @@ class PlayBoard @JvmOverloads constructor(
             FieldType.DEFAULT -> {
                 if (fieldInBord.fieldType != FieldType.DEFAULT) {
                     fieldInBord.fieldType = FieldType.DEFAULT
+                    return true
                 }
-                return true
             }
             else -> return null
         }
@@ -198,15 +175,31 @@ class PlayBoard @JvmOverloads constructor(
         }
     }
 
-    private fun getFieldFromPositionOnCanvas(x: Int, y: Int): FieldInBord? {
+    private fun getFieldFromPositionOnCanvas(point: PointF): FieldInBord? {
+        val x = point.x.toInt()
+        val y = point.y.toInt()
         val row = x / fieldSize
         val column = y / fieldSize
         var field: FieldInBord? = null
         try {
             field = allFields[column][row]
         } finally {
-            return field // the click is somehow IN the view, but outside the actual board
+            return field // if null, the click is somehow IN the view, but outside the actual board
         }
+    }
+
+    private fun getFieldsFromPositionOnCanvas(startField: FieldInBord, endField: FieldInBord): Set<FieldInBord> {
+        val minX = min(startField.xCoordinate, endField.xCoordinate)
+        val maxX = max(startField.xCoordinate, endField.xCoordinate)
+        val minY = min(startField.yCoordinate, endField.yCoordinate)
+        val maxY = max(startField.yCoordinate, endField.yCoordinate)
+        val fields = mutableSetOf<FieldInBord>()
+        for (i in minX.rangeTo(maxX)) {
+            for (j in minY.rangeTo(maxY)) {
+                fields.add(allFields[i][j])
+            }
+        }
+        return fields
     }
 
     override fun onDraw(canvas: Canvas) {

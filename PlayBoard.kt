@@ -138,7 +138,7 @@ class PlayBoard @JvmOverloads constructor(
     }
 
     fun clearBoard() {
-        startField = null; endField = null; wallFields.clear(); clearPath()
+        wallFields.clear(); clearPath()
         for (i in 0.until(numberOfFieldsInOneRow)) {
             for (j in 0.until(numberOfFieldsInOneRow)) {
                 allFields[i][j].fieldType = FieldType.DEFAULT
@@ -149,10 +149,11 @@ class PlayBoard @JvmOverloads constructor(
 
     fun clearPath() {
         pathFields.forEach {
-            if (it != startField && it != endField) {
+            if (it.fieldType == FieldType.PATH && it != startField && it != endField) {
                 it.fieldType = FieldType.DEFAULT
             }
         }
+        pathFields = setOf()
         invalidate()
     }
 

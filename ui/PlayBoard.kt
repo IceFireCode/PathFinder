@@ -37,6 +37,8 @@ class PlayBoard @JvmOverloads constructor(
         when (fieldType) {
             FieldType.PATH ->
                 findPath()
+            FieldType.DEFAULT ->
+                clearBoard()
         }
     }
 

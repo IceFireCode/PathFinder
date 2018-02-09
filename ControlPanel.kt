@@ -6,7 +6,6 @@ import android.util.Log
 import android.view.View
 import android.widget.FrameLayout
 import kotlinx.android.synthetic.main.view_control_panel.view.*
-import nl.ns.pathfinder.Extensions.setShrinkGrowAnimation
 import org.jetbrains.anko.backgroundColorResource
 import org.jetbrains.anko.sdk21.coroutines.onClick
 
@@ -23,6 +22,7 @@ class ControlPanel @JvmOverloads constructor(
     var activeFieldType = FieldType.DEFAULT
         set(value) {
             activeFieldStateIndicator.backgroundColorResource = value.colorResId
+            notifyObservers(ControlPanelState(activeFieldType))
             field = value
         }
 
@@ -34,15 +34,29 @@ class ControlPanel @JvmOverloads constructor(
             onClickButton(it as ControlPanelButton)
         }
 
-        controlClearAll.setShrinkGrowAnimation()
-        controlPanelStartField.setShrinkGrowAnimation()
-        controlPanelEndField.setShrinkGrowAnimation()
-        controlPanelWallField.setShrinkGrowAnimation()
+        controlClearAll.fieldType = FieldType.DEFAULT
+        controlPanelFindPath.onClick {
+            onClickButton(it as ControlPanelButton)
+        }
+
+        controlPanelStartField.fieldType = FieldType.START
+        controlPanelFindPath.onClick {
+            onClickButton(it as ControlPanelButton)
+        }
+
+        controlPanelEndField.fieldType = FieldType.END
+        controlPanelFindPath.onClick {
+            onClickButton(it as ControlPanelButton)
+        }
+
+        controlPanelWallField.fieldType = FieldType.WALL
+        controlPanelFindPath.onClick {
+            onClickButton(it as ControlPanelButton)
+        }
     }
 
     private fun onClickButton(button: ControlPanelButton) {
         activeFieldType = button.fieldType
-        notifyObservers(ControlPanelState(activeFieldType))
     }
 
     override fun registerObserver(observer: ControlPanelObserver) {

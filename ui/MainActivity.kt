@@ -1,12 +1,11 @@
-package nl.ns.pathfinder
+package nl.ns.pathfinder.ui
 
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.view_control_panel.*
-import kotlinx.android.synthetic.main.view_control_panel.view.*
-import org.jetbrains.anko.backgroundColorResource
-import org.jetbrains.anko.backgroundResource
+import nl.ns.pathfinder.FieldType
+import nl.ns.pathfinder.R
 import org.jetbrains.anko.sdk21.coroutines.onClick
 
 class MainActivity : AppCompatActivity() {
@@ -15,11 +14,13 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        controlPanelFindPath.onClick {
-            controlPanel.activeFieldType = FieldType.PATH
-            playBoard.activeFieldType = FieldType.PATH
-            playBoard.findPath()
-        }
+        controlPanel.registerObserver(playBoard)
+
+//        controlPanelFindPath.onClick {
+//            controlPanel.activeFieldType = FieldType.PATH
+//            playBoard.activeFieldType = FieldType.PATH
+//            playBoard.findPath()
+//        }
 
         controlClearAll.onClick {
             controlPanel.activeFieldType = FieldType.DEFAULT
@@ -44,4 +45,8 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        controlPanel.removeObserver(playBoard)
+    }
 }

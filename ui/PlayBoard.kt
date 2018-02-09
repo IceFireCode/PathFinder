@@ -1,4 +1,4 @@
-package nl.ns.pathfinder
+package nl.ns.pathfinder.ui
 
 import android.content.Context
 import android.graphics.Canvas
@@ -8,6 +8,7 @@ import android.support.v4.content.ContextCompat
 import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
+import nl.ns.pathfinder.*
 import nl.ns.pathfinder.Extensions.getSmallestScreenSize
 import kotlin.math.max
 import kotlin.math.min
@@ -17,11 +18,27 @@ import kotlin.math.min
  */
 class PlayBoard @JvmOverloads constructor(
         context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
-) : BoxDrawingView(context, attrs) {
+) : BoxDrawingView(context, attrs), ControlPanelObserver {
+
+    override fun update(cps: ControlPanel.ControlPanelState) {
+        activeFieldType = cps.activeFieldType
+    }
+
     val TAG = PlayBoard::class.java.simpleName
 
     // field selection state
     var activeFieldType = FieldType.DEFAULT
+        set(value) {
+            newStateAction(value)
+            field = value
+        }
+
+    private fun newStateAction(fieldType: FieldType) {
+        when (fieldType) {
+            FieldType.PATH ->
+                findPath()
+        }
+    }
 
     // field collections
     lateinit var allFields: Array<Array<FieldInBord>>

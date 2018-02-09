@@ -1,4 +1,4 @@
-package nl.ns.pathfinder;
+package nl.ns.pathfinder.ui;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -13,6 +13,8 @@ import android.view.View;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import nl.ns.pathfinder.Box;
 
 /**
  * Created by paulvancappelle on 14-11-16.

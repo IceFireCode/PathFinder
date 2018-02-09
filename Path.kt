@@ -1,5 +1,6 @@
 package nl.ns.pathfinder
 
+import nl.ns.pathfinder.ui.PlayBoard
 import java.lang.Math.max
 import java.lang.Math.min
 

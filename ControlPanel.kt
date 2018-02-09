@@ -22,7 +22,7 @@ class ControlPanel @JvmOverloads constructor(
     var activeFieldType = FieldType.DEFAULT
         set(value) {
             activeFieldStateIndicator.backgroundColorResource = value.colorResId
-            notifyObservers(ControlPanelState(activeFieldType))
+            notifyObservers(ControlPanelState(value))
             field = value
         }
 
@@ -35,22 +35,22 @@ class ControlPanel @JvmOverloads constructor(
         }
 
         controlClearAll.fieldType = FieldType.DEFAULT
-        controlPanelFindPath.onClick {
+        controlClearAll.onClick {
             onClickButton(it as ControlPanelButton)
         }
 
         controlPanelStartField.fieldType = FieldType.START
-        controlPanelFindPath.onClick {
+        controlPanelStartField.onClick {
             onClickButton(it as ControlPanelButton)
         }
 
         controlPanelEndField.fieldType = FieldType.END
-        controlPanelFindPath.onClick {
+        controlPanelEndField.onClick {
             onClickButton(it as ControlPanelButton)
         }
 
         controlPanelWallField.fieldType = FieldType.WALL
-        controlPanelFindPath.onClick {
+        controlPanelWallField.onClick {
             onClickButton(it as ControlPanelButton)
         }
     }

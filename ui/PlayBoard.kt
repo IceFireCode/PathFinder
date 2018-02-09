@@ -39,6 +39,8 @@ class PlayBoard @JvmOverloads constructor(
                 findPath()
             FieldType.DEFAULT ->
                 clearBoard()
+            else -> {
+            }
         }
     }
 
@@ -157,10 +159,13 @@ class PlayBoard @JvmOverloads constructor(
     }
 
     fun clearBoard() {
-        wallFields.clear(); clearPath()
+        wallFields.clear()
+        clearPath()
         for (i in 0.until(numberOfFieldsInOneRow)) {
             for (j in 0.until(numberOfFieldsInOneRow)) {
-                allFields[i][j].fieldType = FieldType.DEFAULT
+                if (allFields[i][j] != startField && allFields[i][j] != endField) {
+                    allFields[i][j].fieldType = FieldType.DEFAULT
+                }
             }
         }
         invalidate()

@@ -6,5 +6,5 @@ package nl.ns.pathfinder
 interface Observable {
     fun registerObserver(observer: ControlPanelObserver)
     fun removeObserver(observer: ControlPanelObserver)
-    fun notifyObservers(observableState: ObservableState)
+    fun notifyObservers(observableState: ControlPanel.ControlPanelState)
 }

@@ -67,7 +67,7 @@ class ControlPanel @JvmOverloads constructor(
         observers.remove(observer)
     }
 
-    override fun notifyObservers(observableState: ObservableState) {
+    override fun notifyObservers(observableState: ControlPanelState) {
         observers.forEach {
             try {
                 it.update(observableState as ControlPanelState)

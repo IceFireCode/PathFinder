@@ -6,18 +6,10 @@ package nl.ns.pathfinder
 class FieldInBord(val xCoordinate: Int, val yCoordinate: Int) {
 
     var fieldType = FieldType.DEFAULT
+    var aStarParent: FieldInBord? = null
 
     override fun toString(): String {
         return "x: $xCoordinate, y: $yCoordinate"
     }
-
-//    fun handleOnclick() {
-//        when (fieldType){
-//            FieldType.DEFAULT ->
-//                    fieldType = FieldType.WALL
-//            FieldType.WALL ->
-//                    fieldType = FieldType.DEFAULT
-//        }
-//    }
 
 }

@@ -10,6 +10,8 @@ import android.util.Log
 import android.view.MotionEvent
 import nl.ns.pathfinder.*
 import nl.ns.pathfinder.Extensions.getSmallestScreenSize
+import nl.ns.pathfinder.algorithms.AStarAlgorithm
+import nl.ns.pathfinder.algorithms.PathFindAlgorithm
 import kotlin.math.max
 import kotlin.math.min
 
@@ -32,6 +34,9 @@ class PlayBoard @JvmOverloads constructor(
             newStateAction(value)
             field = value
         }
+
+    // algorithm
+    var algorithm: PathFindAlgorithm = AStarAlgorithm(this)
 
     private fun newStateAction(fieldType: FieldType) {
         when (fieldType) {

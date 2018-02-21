@@ -10,11 +10,16 @@ import java.lang.Math.min
  */
 class Path (val startX: Int, val endX: Int, val startY: Int, val endY: Int){
 
+    constructor(startField: FieldInBord, endField: FieldInBord)
+            : this(startField.xCoordinate, endField.xCoordinate, startField.yCoordinate, endField.yCoordinate) {
+    }
+
     var xDistance: Int = 0
     var yDistance: Int = 0
     var nrOfDiagonalSteps: Int = 0
     var nrOfStraightSteps: Int = 0
     val pathFields: MutableSet<FieldInBord> = mutableSetOf()
+    val nrOfSteps = nrOfDiagonalSteps + nrOfStraightSteps
 
     init {
         xDistance = max(startX, endX) - min(startX, endX)

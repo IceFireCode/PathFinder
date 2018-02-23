@@ -93,7 +93,6 @@ class PlayBoard @JvmOverloads constructor(
                     if (!currentEqualsOrigin && activeFieldType.isMultipleFieldsAllowed) {
                         val touchedFieldCollection = getFieldsFromPositionOnCanvas(touchedFieldOrigin, touchedFieldCurrent)
                         updateFieldCollections(touchedFieldCollection)
-                        //todo have all fields in between also be updated
                     }
 
                     // if it's about just one field
@@ -189,20 +188,29 @@ class PlayBoard @JvmOverloads constructor(
     fun findPath() {
         clearPath()
         if (startField != null && endField != null) {
-            val path = Path(startField!!.xCoordinate, endField!!.xCoordinate, startField!!.yCoordinate, endField!!.yCoordinate)
-            pathFields = path.determinePathFields(this)
-            var hasReachedWall = false
-            pathFields.forEach {
-                if (wallFields.contains(it)) {
-                    hasReachedWall = true
-                    return@forEach
-                }
-                if (it != startField && it != endField && !hasReachedWall) {
-                    it.fieldType = FieldType.PATH
-                }
+
+            if (algorithm != null) {
+                pathFields = algorithm.findPath()
+            } else {
+                tryEasyStraightPath()
             }
-            invalidate()
         }
+    }
+
+    private fun tryEasyStraightPath() {
+        val path = Path(startField!!.xCoordinate, endField!!.xCoordinate, startField!!.yCoordinate, endField!!.yCoordinate)
+        pathFields = path.determinePathFields(this)
+        var hasReachedWall = false
+        pathFields.forEach {
+            if (wallFields.contains(it)) {
+                hasReachedWall = true
+                return@forEach
+            }
+            if (it != startField && it != endField && !hasReachedWall) {
+                it.fieldType = FieldType.PATH
+            }
+        }
+        invalidate()
     }
 
     private fun getFieldFromPositionOnCanvas(point: PointF): FieldInBord? {
@@ -260,6 +268,44 @@ class PlayBoard @JvmOverloads constructor(
         val screenSize = context.getSmallestScreenSize()
         Log.i(TAG, "screenSize: $screenSize, fieldSize: $fieldSize, for $numberOfFieldsInOneRow * $numberOfFieldsInOneRow fields.")
         return screenSize / numberOfFieldsInOneRow
+    }
+
+    fun getNeighbours(fieldInBord: FieldInBord): Set<FieldInBord> {
+        val x = fieldInBord.xCoordinate
+        val y = fieldInBord.yCoordinate
+        val neighbours = mutableSetOf<FieldInBord>()
+
+        val useLeft = x > 0
+        val useAbove = y > 0
+        val useRight = x < (numberOfFieldsInOneRow - 1)
+        val useBelow = y < (numberOfFieldsInOneRow - 1)
+
+        if (useLeft) {
+            neighbours.add(allFields[x - 1][y])
+        }
+        if (useAbove) {
+            neighbours.add(allFields[x][y - 1])
+        }
+        if (useRight) {
+            neighbours.add(allFields[x + 1][y])
+        }
+        if (useBelow) {
+            neighbours.add(allFields[x][y + 1])
+        }
+        if (useLeft && useAbove) {
+            neighbours.add(allFields[x - 1][y - 1])
+        }
+        if (useLeft && useBelow) {
+            neighbours.add(allFields[x - 1][y + 1])
+        }
+        if (useRight && useAbove) {
+            neighbours.add(allFields[x + 1][y - 1])
+        }
+        if (useRight && useBelow) {
+            neighbours.add(allFields[x + 1][y + 1])
+        }
+
+        return neighbours
     }
 
 }

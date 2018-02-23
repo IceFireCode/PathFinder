@@ -13,33 +13,6 @@ class MainActivity : AppCompatActivity() {
 
         controlPanel.registerObserver(playBoard)
 
-//        controlPanelFindPath.onClick {
-//            controlPanel.activeFieldType = FieldType.PATH
-//            playBoard.activeFieldType = FieldType.PATH
-//            playBoard.findPath()
-//        }
-//
-//        controlClearAll.onClick {
-//            controlPanel.activeFieldType = FieldType.DEFAULT
-//            playBoard.activeFieldType = FieldType.DEFAULT
-//            playBoard.clearBoard()
-//        }
-//
-//        controlPanelStartField.onClick {
-//            controlPanel.activeFieldType = FieldType.START
-//            playBoard.activeFieldType = FieldType.START
-//        }
-//
-//        controlPanelEndField.onClick {
-//            controlPanel.activeFieldType = FieldType.END
-//            playBoard.activeFieldType = FieldType.END
-//        }
-//
-//        controlPanelWallField.onClick {
-//            controlPanel.activeFieldType = FieldType.WALL
-//            playBoard.activeFieldType = FieldType.WALL
-//        }
-
     }
 
     override fun onDestroy() {

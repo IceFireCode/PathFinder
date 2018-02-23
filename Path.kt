@@ -70,7 +70,6 @@ class Path (val startX: Int, val endX: Int, val startY: Int, val endY: Int){
             pathFields.add(playBoard.allFields[x][y])
         }
 
-        //todo add val nrOfSteps
         return pathFields.toSet()
     }
 

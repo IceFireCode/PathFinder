@@ -25,7 +25,7 @@ class AStarAlgorithm(val playBoard: PlayBoard) : PathFindAlgorithm {
                 break
             }
 
-            val neighbours: Set<FieldInBord> = playBoard.getNeighbours()
+            val neighbours: Set<FieldInBord> = playBoard.getNeighbours(current)
             neighbours.forEach {
                 if (!it.fieldType.isTraversable || closed.contains(it)) {
                     return@forEach

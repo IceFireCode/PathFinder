@@ -14,6 +14,7 @@ class AStarAlgorithm(val playBoard: PlayBoard) : PathFindAlgorithm {
     var current: FieldInBord = FieldInBord(-1, -1)
 
     override fun findPath(): Set<FieldInBord> {
+        init()
 
         open.add(playBoard.startField!!)
 
@@ -46,7 +47,22 @@ class AStarAlgorithm(val playBoard: PlayBoard) : PathFindAlgorithm {
             }
         }
 
-        return setOf() //todo find path and return it by following the line of parents
+        return thePath() //todo find path and return it by following the line of parents
+    }
+
+    private fun init() {
+        open.clear()
+        closed.clear()
+    }
+
+    private fun thePath(): Set<FieldInBord> {
+        val result = mutableSetOf<FieldInBord>()
+        result.add(current.aStarParent!!)
+        while (current.aStarParent != null) {
+            result.add(current.aStarParent!!)
+            current = current.aStarParent!!
+        }
+        return result
     }
 
     private fun openFieldWithMinimumFCost(): FieldInBord {

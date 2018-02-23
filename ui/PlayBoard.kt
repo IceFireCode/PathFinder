@@ -188,19 +188,22 @@ class PlayBoard @JvmOverloads constructor(
     fun findPath() {
         clearPath()
         if (startField != null && endField != null) {
-
             if (algorithm != null) {
                 pathFields = algorithm.findPath()
+                drawPath()
             } else {
                 tryEasyStraightPath()
             }
-            invalidate()
         }
     }
 
     private fun tryEasyStraightPath() {
         val path = Path(startField!!.xCoordinate, endField!!.xCoordinate, startField!!.yCoordinate, endField!!.yCoordinate)
         pathFields = path.determinePathFields(this)
+        drawPath()
+    }
+
+    private fun drawPath() {
         var hasReachedWall = false
         pathFields.forEach {
             if (wallFields.contains(it)) {
@@ -211,6 +214,7 @@ class PlayBoard @JvmOverloads constructor(
                 it.fieldType = FieldType.PATH
             }
         }
+        invalidate()
     }
 
     private fun getFieldFromPositionOnCanvas(point: PointF): FieldInBord? {

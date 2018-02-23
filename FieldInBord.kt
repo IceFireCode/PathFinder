@@ -8,6 +8,7 @@ class FieldInBord(val xCoordinate: Int, val yCoordinate: Int) {
     var fieldType = FieldType.DEFAULT
     var aStarParent: FieldInBord? = null
     var fCost: Int? = null
+    var hCost: Int? = null
 
     override fun toString(): String {
         return "x: $xCoordinate, y: $yCoordinate"

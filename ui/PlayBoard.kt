@@ -194,6 +194,7 @@ class PlayBoard @JvmOverloads constructor(
             } else {
                 tryEasyStraightPath()
             }
+            invalidate()
         }
     }
 
@@ -210,7 +211,6 @@ class PlayBoard @JvmOverloads constructor(
                 it.fieldType = FieldType.PATH
             }
         }
-        invalidate()
     }
 
     private fun getFieldFromPositionOnCanvas(point: PointF): FieldInBord? {

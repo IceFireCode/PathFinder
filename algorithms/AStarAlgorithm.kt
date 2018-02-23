@@ -17,36 +17,55 @@ class AStarAlgorithm(val playBoard: PlayBoard) : PathFindAlgorithm {
 
         open.add(playBoard.startField!!)
 
-        while (true) {
+        var pathFound = false
+        while (!pathFound) {
             current = openFieldWithMinimumFCost()
             open.remove(current)
             closed.add(current)
             if (current == playBoard.endField) {
+                pathFound = true
                 break
             }
 
             val neighbours: Set<FieldInBord> = playBoard.getNeighbours(current)
-            neighbours.forEach {
-                if (!it.fieldType.isTraversable || closed.contains(it)) {
+            neighbours.forEach { neighbour ->
+                if (!neighbour.fieldType.isTraversable || closed.contains(neighbour)) {
                     return@forEach
+                } else {
+                    val wouldBeFCost = determineFCost(neighbour, current)
+                    if (neighbour.fCost == null || wouldBeFCost.first < neighbour.fCost!!) {
+                        neighbour.fCost = wouldBeFCost.first
+                        neighbour.hCost = wouldBeFCost.second
+                        neighbour.aStarParent = current
+                        if (!open.contains(neighbour)) {
+                            open.add(neighbour)
+                        }
+                    }
                 }
 
             }
         }
 
-        return setOf()
+        return setOf() //todo find path and return it by following the line of parents
     }
 
     private fun openFieldWithMinimumFCost(): FieldInBord {
-        open.forEach {
-            determineFCost(it)
+        if (open.size == 1) {
+            return open.first()
         }
-        return open.minBy { it.fCost!! }!!
+        return open.minBy {
+            it.fCost!!
+        }!!
     }
 
-    private fun determineFCost(fieldInBord: FieldInBord) {
-        val nrOfStepsToStartField = Path(playBoard.startField!!, fieldInBord).nrOfSteps
+    private fun determineFCost(fieldInBord: FieldInBord, fieldToUseAsParent: FieldInBord): Pair<Int, Int> {
+        var parentHCost = 0 //todo don't use fCost, but keep track of the cost to the startfield and use that cost of the parent field
+        if (fieldToUseAsParent != playBoard.startField) {
+            parentHCost = fieldToUseAsParent.hCost!!
+        }
+
+        val nrOfStepsToStartField = Path(fieldToUseAsParent, fieldInBord).nrOfSteps + parentHCost
         val nrOfStepsToEndField = Path(fieldInBord, playBoard.endField!!).nrOfSteps
-        fieldInBord.fCost = nrOfStepsToStartField + nrOfStepsToEndField
+        return Pair(nrOfStepsToStartField + nrOfStepsToEndField!!, nrOfStepsToStartField)
     }
 }

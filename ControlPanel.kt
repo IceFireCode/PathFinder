@@ -2,7 +2,6 @@ package nl.ns.pathfinder
 
 import android.content.Context
 import android.util.AttributeSet
-import android.util.Log
 import android.view.View
 import android.widget.FrameLayout
 import kotlinx.android.synthetic.main.view_control_panel.view.*
@@ -69,11 +68,7 @@ class ControlPanel @JvmOverloads constructor(
 
     override fun notifyObservers(observableState: ControlPanelState) {
         observers.forEach {
-            try {
-                it.update(observableState as ControlPanelState)
-            } catch (e: Exception) {
-                Log.i(TAG, e.message)
-            }
+            it.update(observableState)
         }
     }
 
